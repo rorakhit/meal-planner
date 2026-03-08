@@ -1,6 +1,11 @@
 # Data files (generated at runtime)
 current_meal_plan.json
 
+# Secrets
+.env
+.env.local
+.env.*.local
+
 # Python
 __pycache__/
 *.py[cod]
@@ -9,8 +14,17 @@ __pycache__/
 venv/
 env/
 
+# macOS launch services (machine-specific)
+com.ro.mealplanner.plist
+start.sh
+create_repo.sh
+
+# Flask
+instance/
+
 # macOS
 .DS_Store
 
 # Logs
+logs/
 *.log
