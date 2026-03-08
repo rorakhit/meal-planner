@@ -1,0 +1,16 @@
+# Data files (generated at runtime)
+current_meal_plan.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
