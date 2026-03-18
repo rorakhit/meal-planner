@@ -72,7 +72,6 @@ GENERATION_PROMPT = """Generate a weekly meal plan (Monday–Sunday dinners) for
 **Grocery Strategy:**
 - Minimize total groceries — reuse ingredients across meals throughout the week
 - Use full pack sizes (e.g. if chicken thighs come in a 6-pack, plan 2-3 chicken meals to use them all)
-- No specialty items (no harissa, miso, nduja — use accessible substitutes)
 - For salads, use salad kits instead of plain lettuce
 
 **Recipe Style:**
@@ -674,7 +673,6 @@ Rules:
 - Serves 2 people — scale all ingredient quantities for 2 servings
 - Flavorful and satisfying but not technically complicated
 - All ingredients must be available at a standard Market Basket supermarket
-- No specialty items (no harissa, miso, nduja — use accessible substitutes)
 - NEVER include: arugula, tuna salad, pickled anything, raw/uncooked onions, feta cheese, or bone-in chicken
 - Vegetable sides must be flavorful — roast, char, glaze, or season them (no plain steamed veggies)
 - When possible, reuse ingredients already in this week's meal plan to minimize waste
