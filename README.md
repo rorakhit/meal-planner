@@ -1,51 +1,83 @@
-# meal-planner
+# Meal Planner 🍽️
 
-A weekly meal planning system with two parts:
+An AI-powered weekly meal planner that generates 7 dinners, builds a grocery list, and emails the plan every Sunday. Includes a web UI for viewing meals, regenerating individual days, and checking off groceries. Deployed on Railway.
 
-1. **Sunday scheduled task** — runs every Sunday at 9am via Claude Cowork, checks the [Market Basket weekly flyer](https://www.shopmarketbasket.com/weekly-flyer/), generates 7 personalised dinners + snack ideas, emails a beautiful HTML summary, and saves the plan locally.
-
-2. **Grocery list app** — a local Flask web app at `localhost:8001` that shows the week's meal plan and lets you check off what you already have to build your grocery list.
-
----
-
-## Setup
-
-### 1. Install dependencies
-
-```bash
-pip install flask
-```
-
-### 2. Run the grocery list app
-
-```bash
-python3 grocery_app.py
-```
-
-Then open [http://localhost:8001](http://localhost:8001).
-
-The app reads from `~/Documents/Claude/MealPlanner/current_meal_plan.json`, which is written automatically by the Sunday scheduled task.
-
----
+**Live app:** [meal-planner.up.railway.app](https://meal-planner.up.railway.app)
 
 ## How it works
 
-### Sunday task (automated)
-- Runs every Sunday at 9am via Claude Cowork scheduled tasks
-- Fetches the Market Basket weekly flyer and builds meals around what's on sale
-- Saves the meal plan JSON to `~/Documents/Claude/MealPlanner/current_meal_plan.json`
-- Sends an HTML email digest with the full plan and grocery list
-
-### Grocery list app
-- Reads the current week's meal plan from the JSON file
-- Shows all 7 dinners and snack ideas
-- Ingredient checklist — tick off what you have, the grocery list updates live
-- Remembers your checked items in the browser across the week
-- Copy-to-clipboard button for the final grocery list
-
----
+1. **Every Sunday at 9am ET**, the bot calls Claude to generate 7 dinners + snack ideas
+2. **Emails the plan** with a styled HTML summary via Resend
+3. **Web UI** lets you view the plan, regenerate any meal, and build your grocery list
+4. **Regenerate** individual days — tell it what you don't like and it swaps in something new
 
 ## Meal preferences
-- Flavorful but not technically complicated
-- No uncooked onions, no pickled anything
-- All ingredients sourced from Market Basket
+
+| Rule | Details |
+|------|---------|
+| Servings | 2 people |
+| Structure | 1 protein + 2 vegetable sides |
+| Style | Flavorful, bold seasoning, not too complicated |
+| Veggies | Must be well-seasoned — roasted, charred, glazed (no plain steamed) |
+| Grocery strategy | Minimise total items, reuse ingredients across meals, use full pack sizes |
+| Salads | Use salad kits, not plain lettuce |
+| No specialty items | No harissa, miso, nduja — use accessible substitutes |
+
+### Dislikes (never included)
+
+- Arugula
+- Tuna salad
+- Pickled anything
+- Raw/uncooked onions
+- Feta cheese
+- Bone-in chicken (always boneless thighs or breasts)
+
+## Features
+
+- **Auto-generated weekly plan** — Claude creates 7 dinners + snacks every Sunday
+- **Email digest** — styled HTML email with meals and full grocery list
+- **Web dashboard** — browse the week's meals from any device
+- **Regenerate any day** — click "Regenerate" on a meal card, optionally specify what to avoid
+- **Generate New Plan** button — create a fresh plan on demand
+- **Grocery list builder** — check off what you already have, see what you need to buy
+- **Copy to clipboard** — one-click copy of your shopping list
+- **Print view** — clean printable layout for the meal plan
+
+## Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /` | Web UI — meal plan + grocery list |
+| `GET /plan` | Current meal plan as JSON |
+| `POST /generate` | Generate a new weekly plan |
+| `POST /regenerate` | Swap one meal (body: `{"meal_index": 0, "disliked": "salmon"}`) |
+| `GET /health` | Server status + scheduler info |
+
+## Deployment (Railway)
+
+Runs on [Railway](https://railway.app) as an always-on Dockerfile service.
+
+### Environment variables
+
+| Variable | Description |
+|----------|-------------|
+| `ANTHROPIC_API_KEY` | Claude API key for meal generation |
+| `RESEND_API_KEY` | Resend API key for email delivery |
+| `NOTIFY_EMAIL` | Email to send meal plans to |
+| `EMAIL_FROM` | (optional) Sender address, defaults to `onboarding@resend.dev` |
+
+### Deploy
+
+1. Connect the GitHub repo to Railway
+2. Railway auto-detects the `Dockerfile` and deploys
+3. Add the env vars above in the Railway dashboard
+4. Generate a public domain in Railway networking settings
+
+## Local development
+
+```bash
+pip install -r requirements.txt
+cp .env.example .env  # fill in credentials
+python grocery_app.py
+# → http://localhost:8001
+```
