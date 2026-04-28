@@ -73,14 +73,16 @@ def _parse_ingredient(text):
 
 
 def rebuild_all_ingredients(meals):
-    """Deduplicate and consolidate ingredients across all meals.
+    """Deduplicate ingredients across all meals.
 
-    Combines quantities for ingredients that share the same base name and unit.
-    E.g. "lemon x 1" + "lemon x 2" becomes "lemon x 3".
+    Groups by ingredient name. Sums quantities that share the same unit.
+    When an ingredient appears with multiple different units, shows each
+    unit's total as an array. E.g.:
+      "olive oil x 2 tbsp" + "olive oil x 1 tbsp" -> "olive oil — 3 tbsp"
+      "garlic x 3 cloves" + "garlic x 1 head"     -> "garlic — 3 cloves, 1 head"
     """
-    # Key: (lowercase_name, lowercase_unit) -> [total_qty, display_name, unit]
+    # name_key -> [display_name, {unit_key -> [total_qty, display_unit]}]
     combined = {}
-    # Preserve insertion order for stable output
     order = []
 
     for meal in meals:
@@ -88,32 +90,36 @@ def rebuild_all_ingredients(meals):
             if " from " in ing.lower():
                 continue
             name, qty, unit = _parse_ingredient(ing)
-            key = (name.lower(), unit.lower())
+            name_key = name.lower()
+            unit_key = unit.lower()
 
-            if key not in combined:
-                combined[key] = [qty, name, unit]
-                order.append(key)
+            if name_key not in combined:
+                combined[name_key] = [name, {}]
+                order.append(name_key)
+
+            by_unit = combined[name_key][1]
+            if unit_key not in by_unit:
+                by_unit[unit_key] = [qty, unit]
             else:
-                existing = combined[key]
-                if existing[0] is not None and qty is not None:
-                    existing[0] += qty
-                # If either qty is None, keep what we have (can't sum unknowns)
+                existing_qty = by_unit[unit_key][0]
+                if existing_qty is not None and qty is not None:
+                    by_unit[unit_key][0] = existing_qty + qty
+
+    def _fmt_qty(qty, unit):
+        if qty is None:
+            # Multi-word units with no number are notes ("already have", "to taste") — skip
+            return unit if unit and " " not in unit.strip() else ""
+        qty_str = str(int(qty)) if qty == int(qty) else str(qty)
+        return f"{qty_str} {unit}".strip() if unit else qty_str
 
     result = []
-    for key in order:
-        qty, name, unit = combined[key]
-        if qty is not None:
-            # Format as integer when possible (3.0 -> "3"), otherwise keep decimal
-            qty_str = str(int(qty)) if qty == int(qty) else str(qty)
-            if unit:
-                result.append(f"{name} x {qty_str} {unit}")
-            else:
-                result.append(f"{name} x {qty_str}")
+    for name_key in order:
+        display_name, by_unit = combined[name_key]
+        parts = [_fmt_qty(qty, unit) for qty, unit in by_unit.values() if _fmt_qty(qty, unit)]
+        if parts:
+            result.append(f"{display_name} — {', '.join(parts)}")
         else:
-            if unit:
-                result.append(f"{name} x {unit}")
-            else:
-                result.append(name)
+            result.append(display_name)
 
     return result
 
