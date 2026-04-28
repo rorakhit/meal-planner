@@ -70,6 +70,8 @@ Lean into this style for most meals — mix of proteins and preparations within 
 **Do not repeat any of these recently served meals:**
 {recent_meals}
 
+Also produce a consolidated grocery list for the week. Combine ingredients across all meals intelligently — sum quantities where possible, use practical store pack sizes, and write each item as you'd see it on a shopping list (e.g. "chicken thighs — 3 lbs", "garlic — 1 head", "olive oil — 1 bottle"). Exclude pantry staples like salt, pepper, and oil unless a specific quantity is critical.
+
 Return ONLY a JSON object with no markdown formatting:
 {
   "week_of": "WEEK_OF_DATE",
@@ -81,7 +83,8 @@ Return ONLY a JSON object with no markdown formatting:
       "ingredients": ["ingredient x qty", "ingredient x qty"]
     }
   ],
-  "snacks": ["snack idea 1", "snack idea 2", "snack idea 3"]
+  "snacks": ["snack idea 1", "snack idea 2", "snack idea 3"],
+  "grocery_list": ["item — qty", "item — qty"]
 }
 
 Include all 7 days (Monday–Sunday). Each meal must have ingredients with quantities for 2 servings."""
@@ -117,6 +120,28 @@ def _pick_cuisine_theme(history: list) -> str:
     if not available:
         available = CUISINE_THEMES
     return random.choice(available)
+
+
+def _crosscheck_grocery_list(grocery_list: list, meals: list) -> list:
+    """Ensure every per-meal ingredient name is covered in Claude's grocery list.
+
+    Uses substring matching — if the ingredient name appears anywhere in any
+    grocery list item, it's considered covered. Appends any uncovered ingredients
+    in raw form so nothing gets silently dropped.
+    """
+    grocery_lower = " | ".join(grocery_list).lower()
+
+    for meal in meals:
+        for ing in meal.get("ingredients", []):
+            if " from " in ing.lower():
+                continue
+            # Extract just the name part (before " x ")
+            name = ing.split(" x ")[0].strip().lower()
+            if not any(name in item.lower() for item in grocery_list):
+                grocery_list.append(ing)
+                log.warning(f"Grocery cross-check: added missing ingredient '{ing}'")
+
+    return grocery_list
 
 
 def _format_recent_meals(history: list) -> str:
@@ -156,7 +181,10 @@ def generate_meal_plan():
     )
 
     plan = parse_ai_json(message.content[0].text)
-    plan["all_ingredients"] = rebuild_all_ingredients(plan.get("meals", []))
+    grocery_list = plan.get("grocery_list") or []
+    if not grocery_list:
+        grocery_list = rebuild_all_ingredients(plan.get("meals", []))
+    plan["all_ingredients"] = _crosscheck_grocery_list(grocery_list, plan.get("meals", []))
     plan["cuisine_theme"] = cuisine_theme
     save_plan(plan)
 
@@ -228,7 +256,7 @@ def regenerate_meal(meal_index: int, disliked: str):
     new_meal.pop("recipe", None)
     meals[meal_index] = new_meal
     plan["meals"] = meals
-    plan["all_ingredients"] = rebuild_all_ingredients(meals)
+    plan["all_ingredients"] = _crosscheck_grocery_list(rebuild_all_ingredients(meals), meals)
     save_plan(plan)
 
     return new_meal
