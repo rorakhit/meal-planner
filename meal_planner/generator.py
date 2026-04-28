@@ -71,18 +71,18 @@ Lean into this style for most meals — mix of proteins and preparations within 
 {recent_meals}
 
 Return ONLY a JSON object with no markdown formatting:
-{{
+{
   "week_of": "WEEK_OF_DATE",
   "meals": [
-    {{
+    {
       "day": "Monday",
       "name": "Dish Name",
       "description": "One sentence describing the dish. Serves 2.",
       "ingredients": ["ingredient x qty", "ingredient x qty"]
-    }}
+    }
   ],
   "snacks": ["snack idea 1", "snack idea 2", "snack idea 3"]
-}}
+}
 
 Include all 7 days (Monday–Sunday). Each meal must have ingredients with quantities for 2 servings."""
 
@@ -151,7 +151,7 @@ def generate_meal_plan():
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     message = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=2048,
+        max_tokens=4096,
         messages=[{"role": "user", "content": prompt}],
     )
 
