@@ -205,8 +205,7 @@
     </div>
 
     <div class="panel">
-      {% set total = all_ingredients.values()|sum(attribute='__len__') if all_ingredients else 0 %}
-      <h3>What you need to buy <span class="badge" id="need-count">{{ total }}</span></h3>
+      <h3>What you need to buy <span class="badge" id="need-count">{{ ingredient_count }}</span></h3>
       <div class="need-list" id="need-list">
         {% set ns = namespace(idx=0) %}
         {% for aisle, items in all_ingredients.items() %}

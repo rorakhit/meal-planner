@@ -11,6 +11,12 @@ log = logging.getLogger("meal-planner")
 bp = Blueprint("main", __name__)
 
 
+def _normalize_ingredients(raw) -> dict:
+    if isinstance(raw, dict):
+        return raw
+    return {"Other": raw or []}
+
+
 @bp.route("/")
 def index():
     data = load_plan()
@@ -19,7 +25,8 @@ def index():
         week_of=data.get("week_of", "—"),
         meals=data.get("meals", []),
         snacks=data.get("snacks", []),
-        all_ingredients=data.get("all_ingredients") if isinstance(data.get("all_ingredients"), dict) else {"Other": data.get("all_ingredients", [])},
+        all_ingredients=_normalize_ingredients(data.get("all_ingredients")),
+        ingredient_count=sum(len(v) for v in _normalize_ingredients(data.get("all_ingredients")).values()),
     )
 
 
