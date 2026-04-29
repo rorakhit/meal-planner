@@ -7,24 +7,6 @@ import anthropic
 from .config import ANTHROPIC_API_KEY, ET
 from .models import load_history, load_plan, parse_ai_json, rebuild_all_ingredients, save_history, save_plan
 
-RECIPE_PROMPT = """Write a clear, practical recipe for "{name}" for 2 people.
-
-Ingredients already decided:
-{ingredients}
-
-Return ONLY a JSON object with no markdown formatting:
-{{
-  "prep_time": "X minutes",
-  "cook_time": "X minutes",
-  "steps": [
-    "Step text...",
-    "Step text..."
-  ],
-  "tip": "One optional tip (marinating timing, make-ahead note, etc.). Omit the key if there is no useful tip."
-}}
-
-Steps should be clear and numbered in sequence. Each step is one sentence or two at most. Assume a competent home cook."""
-
 log = logging.getLogger("meal-planner")
 
 CUISINE_THEMES = [
@@ -42,45 +24,53 @@ CUISINE_THEMES = [
     "Italian trattoria",
 ]
 
-GENERATION_PROMPT = """Generate a weekly meal plan (Monday–Sunday dinners) for 2 people.
+GENERATION_PROMPT = """Generate exactly 3 dinners for the week for 2 people. These are the only 3 nights they'll cook — make every one worth it.
 
 **This week's cuisine theme: {cuisine_theme}**
-Lean into this style for most meals — mix of proteins and preparations within the theme. A couple of meals can diverge if they fit naturally, but the week should feel cohesive and intentional around this theme.
+Lean hard into this style. Every dish should feel intentional and cohesive within the theme.
 
 **Meal Structure:**
 - Each dinner = 1 protein + 2 vegetable sides
+- Mix: include at least 1 quick meal (under 30 minutes active cooking) and 1 more involved meal worth the effort
+- Where it makes sense, plan one meal as a batch cook — make extra protein so leftovers become a second easy meal with minimal work. Note this explicitly in the description.
 
 **Dislikes (never include):**
 - Arugula, Tuna salad, Pickled anything, Raw/uncooked onions, Feta cheese
 - Bone-in chicken — always use boneless (thighs or breasts)
 
-**Grocery Strategy:**
-- Minimize total groceries for this week — reuse ingredients across meals within the week
-- Use full pack sizes (e.g. if chicken thighs come in a 6-pack, plan 2-3 chicken meals to use them all)
-- For salads, use salad kits instead of plain lettuce
+**Flavor bar — this is the most important constraint:**
+- Every dish must be interesting enough to order at a restaurant. If it wouldn't be on a menu, it's not good enough.
+- No bland proteins — everything must be marinated, spiced, glazed, or sauced
+- Vegetable sides must be aggressively seasoned — roast, char, glaze, or finish with something bold (no plain steamed anything)
+- For proteins, prefer overnight marinades where it makes sense — note this in the description so the cook knows to prep the night before
 
-**Recipe Style:**
-- Flavorful and satisfying but not technically complicated
-- Vary spice profiles so reused ingredients feel like different meals
-- Emphasize bold, well-seasoned flavors
-- Vegetable sides must be flavorful — roast, char, glaze, or season them well (no plain steamed veggies)
-- Examples of good sides: garlic-parmesan roasted broccoli, honey-glazed carrots, charred lemon asparagus, cajun corn, sesame green beans
-- For proteins, prefer overnight marinades where it makes sense (e.g. chicken thighs, skirt steak, pork) — note this in the description so the cook knows to prep the night before
+**Grocery Strategy:**
+- Minimize total groceries — reuse ingredients across the 3 meals within the week
+- Use full pack sizes (e.g. if chicken thighs come in a pack of 6, use them across multiple meals)
+- For salads, use salad kits instead of plain lettuce
 
 **Do not repeat any of these recently served meals:**
 {recent_meals}
 
-Also produce a consolidated grocery list for the week. Combine ingredients across all meals intelligently — sum quantities where possible, use practical store pack sizes, and write each item as you'd see it on a shopping list (e.g. "chicken thighs — 3 lbs", "garlic — 1 head", "olive oil — 1 bottle"). Exclude pantry staples like salt, pepper, and oil unless a specific quantity is critical.
+Also produce a consolidated grocery list for the week. Combine ingredients intelligently — sum quantities, use practical store pack sizes, write each item as you'd see it on a shopping list. Exclude pantry staples (salt, pepper, oil) unless a specific quantity matters.
+
+For each meal, also write a clear step-by-step recipe. Steps should be concise — one or two sentences each. Assume a competent home cook.
 
 Return ONLY a JSON object with no markdown formatting:
 {
   "week_of": "WEEK_OF_DATE",
   "meals": [
     {
-      "day": "Monday",
       "name": "Dish Name",
-      "description": "One sentence describing the dish. Serves 2.",
-      "ingredients": ["ingredient x qty", "ingredient x qty"]
+      "description": "One sentence. Note if batch cooking or if marinating overnight.",
+      "time": "X minutes active cooking",
+      "ingredients": ["ingredient x qty", "ingredient x qty"],
+      "recipe": {
+        "prep_time": "X minutes",
+        "cook_time": "X minutes",
+        "steps": ["Step 1...", "Step 2..."],
+        "tip": "One optional tip — omit the key entirely if there is nothing worth adding."
+      }
     }
   ],
   "snacks": ["snack idea 1", "snack idea 2", "snack idea 3"],
@@ -96,34 +86,40 @@ Return ONLY a JSON object with no markdown formatting:
   }
 }
 
-Include all 7 days (Monday–Sunday). Each meal must have ingredients with quantities for 2 servings."""
+Include exactly 3 meals. No day assignments. Each meal must have ingredients with quantities for 2 servings."""
 
-REGENERATE_PROMPT = """Generate a replacement dinner for {day} to swap out: {old_name}.
+REGENERATE_PROMPT = """Generate a replacement dinner to swap out: {old_name}.
 
 Rules:
 - Serves 2 people — scale all ingredient quantities for 2 servings
-- Flavorful and satisfying but not technically complicated
+- Must be interesting enough to order at a restaurant — bold, well-seasoned, not bland
 - All ingredients must be available at a standard Market Basket supermarket
 - NEVER include: arugula, tuna salad, pickled anything, raw/uncooked onions, feta cheese, or bone-in chicken
-- Vegetable sides must be flavorful — roast, char, glaze, or season them (no plain steamed veggies)
-- For proteins, prefer overnight marinades where it makes sense (e.g. chicken thighs, skirt steak, pork) — note this in the description so the cook knows to prep the night before
-- When possible, reuse ingredients already in this week's meal plan to minimize waste within the week
-- Use full grocery store pack sizes across the week (e.g. if chicken thighs come 6 per pack, plan to use all 6 across meals)
+- Vegetable sides must be aggressively seasoned — roast, char, glaze, no plain steamed anything
+- For proteins, prefer overnight marinades where it makes sense — note this in the description
+- When possible, reuse ingredients already in this week's meal plan to minimize waste
 - For salads, use salad kits instead of plain lettuce
 {disliked_note}
 {other_note}
 
+Also write a clear step-by-step recipe. Steps should be concise — one or two sentences each.
+
 Return ONLY a JSON object with no markdown formatting:
 {{
-  "day": "{day}",
   "name": "Dish Name",
-  "description": "One sentence describing the dish and how it's cooked. Serves 2.",
-  "ingredients": ["ingredient x qty", "ingredient x qty"]
+  "description": "One sentence describing the dish. Note if marinating overnight.",
+  "time": "X minutes active cooking",
+  "ingredients": ["ingredient x qty", "ingredient x qty"],
+  "recipe": {{
+    "prep_time": "X minutes",
+    "cook_time": "X minutes",
+    "steps": ["Step 1...", "Step 2..."],
+    "tip": "One optional tip — omit the key entirely if there is nothing worth adding."
+  }}
 }}"""
 
 
 def _pick_cuisine_theme(history: list) -> str:
-    """Pick a cuisine theme, avoiding the last 2 weeks' themes if stored."""
     recent_themes = [w.get("cuisine_theme") for w in history[-2:] if w.get("cuisine_theme")]
     available = [t for t in CUISINE_THEMES if t not in recent_themes]
     if not available:
@@ -132,11 +128,7 @@ def _pick_cuisine_theme(history: list) -> str:
 
 
 def _crosscheck_grocery_list(grocery_list: dict, meals: list) -> dict:
-    """Ensure every per-meal ingredient name is covered in Claude's grocery list.
-
-    Uses substring matching against all items across all aisles. Appends any
-    uncovered ingredients to the 'Other' section so nothing gets silently dropped.
-    """
+    """Ensure every per-meal ingredient name is covered in Claude's grocery list."""
     all_items = [item for items in grocery_list.values() for item in items]
 
     for meal in meals:
@@ -148,7 +140,6 @@ def _crosscheck_grocery_list(grocery_list: dict, meals: list) -> dict:
                 grocery_list.setdefault("Other", []).append(ing)
                 log.warning(f"Grocery cross-check: added missing ingredient '{ing}'")
 
-    # Remove empty sections
     return {k: v for k, v in grocery_list.items() if v}
 
 
@@ -162,7 +153,7 @@ def _format_recent_meals(history: list) -> str:
 
 
 def generate_meal_plan():
-    """Call Claude to generate a full weekly meal plan."""
+    """Call Claude to generate a weekly meal plan."""
     now = datetime.now(ET)
     days_until_monday = (7 - now.weekday()) % 7
     if days_until_monday == 0:
@@ -203,34 +194,6 @@ def generate_meal_plan():
     return plan
 
 
-def generate_recipe(day: str) -> dict:
-    """Generate and cache a recipe for the given day's meal."""
-    plan = load_plan()
-    meals = plan.get("meals", [])
-
-    meal = next((m for m in meals if m["day"].lower() == day.lower()), None)
-    if not meal or meal["name"] == "—":
-        raise ValueError(f"No meal found for {day}")
-
-    if meal.get("recipe"):
-        return meal["recipe"]
-
-    ingredients_text = "\n".join(f"- {i}" for i in meal.get("ingredients", []))
-    prompt = RECIPE_PROMPT.format(name=meal["name"], ingredients=ingredients_text)
-
-    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-    message = client.messages.create(
-        model="claude-haiku-4-5-20251001",
-        max_tokens=1024,
-        messages=[{"role": "user", "content": prompt}],
-    )
-
-    recipe = parse_ai_json(message.content[0].text)
-    meal["recipe"] = recipe
-    save_plan(plan)
-    return recipe
-
-
 def regenerate_meal(meal_index: int, disliked: str):
     """Regenerate a single meal in the current plan."""
     plan = load_plan()
@@ -246,7 +209,6 @@ def regenerate_meal(meal_index: int, disliked: str):
     other_note = f"Already on the plan this week (don't repeat): {', '.join(other_meals)}." if other_meals else ""
 
     prompt = REGENERATE_PROMPT.format(
-        day=meal["day"],
         old_name=meal["name"],
         disliked_note=disliked_note,
         other_note=other_note,
@@ -255,13 +217,12 @@ def regenerate_meal(meal_index: int, disliked: str):
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     message = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=512,
+        max_tokens=1024,
         messages=[{"role": "user", "content": prompt}],
     )
 
     new_meal = parse_ai_json(message.content[0].text)
 
-    new_meal.pop("recipe", None)
     meals[meal_index] = new_meal
     plan["meals"] = meals
     grocery_list = plan.get("all_ingredients")

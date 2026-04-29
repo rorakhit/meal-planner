@@ -20,14 +20,9 @@ ET = ZoneInfo("America/New_York")
 PLACEHOLDER = {
     "week_of": "Not yet generated",
     "meals": [
-        {
-            "day": d,
-            "name": "—",
-            "description": "Check back after Sunday's meal plan runs.",
-            "ingredients": [],
-        }
-        for d in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        {"name": "—", "description": "Check back after Sunday's meal plan runs.", "ingredients": [], "time": ""}
+        for _ in range(3)
     ],
     "snacks": ["Check back after Sunday's meal plan runs."],
-    "all_ingredients": [],
+    "all_ingredients": {},
 }

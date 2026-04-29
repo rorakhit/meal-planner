@@ -2,7 +2,7 @@ import logging
 
 from flask import Blueprint, jsonify, render_template, request
 
-from .generator import generate_meal_plan, generate_recipe, regenerate_meal
+from .generator import generate_meal_plan, regenerate_meal
 from .models import load_plan
 from .scheduler import scheduler
 
@@ -20,13 +20,15 @@ def _normalize_ingredients(raw) -> dict:
 @bp.route("/")
 def index():
     data = load_plan()
+    all_ingredients = _normalize_ingredients(data.get("all_ingredients"))
     return render_template(
         "index.html",
         week_of=data.get("week_of", "—"),
+        cuisine_theme=data.get("cuisine_theme", ""),
         meals=data.get("meals", []),
         snacks=data.get("snacks", []),
-        all_ingredients=_normalize_ingredients(data.get("all_ingredients")),
-        ingredient_count=sum(len(v) for v in _normalize_ingredients(data.get("all_ingredients")).values()),
+        all_ingredients=all_ingredients,
+        ingredient_count=sum(len(v) for v in all_ingredients.values()),
     )
 
 
@@ -55,25 +57,6 @@ def regenerate():
     except Exception as e:
         log.error(f"regenerate failed: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
-
-
-@bp.route("/recipe/<day>")
-def recipe(day):
-    try:
-        plan = load_plan()
-        meal = next((m for m in plan.get("meals", []) if m["day"].lower() == day.lower()), None)
-        if not meal or meal["name"] == "—":
-            return "No meal found for that day.", 404
-        rec = generate_recipe(day)
-        return render_template(
-            "recipe.html",
-            meal=meal,
-            recipe=rec,
-            week_of=plan.get("week_of", ""),
-        )
-    except Exception as e:
-        log.error(f"recipe failed: {e}", exc_info=True)
-        return f"Error generating recipe: {e}", 500
 
 
 @bp.route("/plan")
