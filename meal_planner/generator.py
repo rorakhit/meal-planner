@@ -24,29 +24,29 @@ CUISINE_THEMES = [
     "Italian trattoria",
 ]
 
-GENERATION_PROMPT = """Generate exactly 3 dinners for the week for 2 people. These are the only 3 nights they'll cook — make every one worth it.
+GENERATION_PROMPT = """Generate exactly 3 dinners for the week. These are the only 3 nights cooking will happen — make every one worth it.
 
 **This week's cuisine theme: {cuisine_theme}**
-Lean hard into this style. Every dish should feel intentional and cohesive within the theme.
+Use this as inspiration, not a straitjacket. 1-2 meals should draw from this style; the third can diverge if there's a more compelling option. No need to force every dish into the theme.
 
 **Meal Structure:**
-- Each dinner = 1 protein + 2 vegetable sides
-- Mix: include at least 1 quick meal (under 30 minutes active cooking) and 1 more involved meal worth the effort
-- Where it makes sense, plan one meal as a batch cook — make extra protein so leftovers become a second easy meal with minimal work. Note this explicitly in the description.
+- Each dinner = 1 protein + 2 sides
+- Sides must be light accompaniments — roasted or sautéed vegetables, a simple salad, a grain. Not full sub-dishes like saag paneer, dal, or curry — those are mains, not sides.
+- Mix of effort: at least 1 quick meal (under 30 minutes active cooking) and 1 more involved meal worth the effort
+- Each recipe serves 2, but the cook is often eating solo — planned leftovers are intentional and welcome. If a meal batch-cooks well, say so explicitly in the description.
 
 **Dislikes (never include):**
-- Arugula, Tuna salad, Pickled anything, Raw/uncooked onions, Feta cheese
-- Bone-in chicken — always use boneless (thighs or breasts)
+- Arugula, tuna salad, pickled anything, raw/uncooked onions, feta cheese
+- Bone-in chicken — always use boneless thighs or breasts
 
-**Flavor bar — this is the most important constraint:**
-- Every dish must be interesting enough to order at a restaurant. If it wouldn't be on a menu, it's not good enough.
+**Flavor bar — the most important constraint:**
+- Every dish must be interesting enough to order at a restaurant. If it wouldn't appear on a menu, it's not good enough.
 - No bland proteins — everything must be marinated, spiced, glazed, or sauced
-- Vegetable sides must be aggressively seasoned — roast, char, glaze, or finish with something bold (no plain steamed anything)
-- For proteins, prefer overnight marinades where it makes sense — note this in the description so the cook knows to prep the night before
+- Sides must be aggressively seasoned — roast, char, glaze, or finish with something bold. No plain steamed anything.
+- Consider an overnight marinade for every protein. If you skip it, the dish must not need it.
 
 **Grocery Strategy:**
-- Minimize total groceries — reuse ingredients across the 3 meals within the week
-- Use full pack sizes (e.g. if chicken thighs come in a pack of 6, use them across multiple meals)
+- Choose the best dishes regardless of ingredient overlap — don't compromise flavor for the sake of reuse
 - For salads, use salad kits instead of plain lettuce
 
 **Do not repeat any of these recently served meals:**
@@ -54,17 +54,7 @@ Lean hard into this style. Every dish should feel intentional and cohesive withi
 
 For snacks, provide 6 ideas with enough variety to cover the week — mix of packaged snacks (e.g. chips, crackers, bars, jerky) and fresh options. Never suggest hummus.
 
-Also produce a consolidated grocery list for the week. Combine ingredients intelligently — sum quantities, use practical store pack sizes, write each item as you'd see it on a shopping list. Be comprehensive — include every ingredient from every meal. Exclude only true pantry staples (salt, pepper, oil) unless a specific quantity matters.
-
-Categorise every item correctly:
-- Produce: fresh vegetables and fruits only
-- Meat & Seafood: ALL proteins — chicken, beef, pork, lamb, fish, shrimp, etc.
-- Dairy & Eggs: milk, butter, cheese, eggs, cream, yogurt
-- Pantry & Dry Goods: grains, pasta, rice, flour, spices, dried goods, sauces, condiments
-- Canned & Jarred: canned tomatoes, beans, coconut milk, broth, etc.
-- Bread & Bakery: bread, tortillas, pita, naan, rolls
-- Frozen: anything from the freezer aisle
-- Other: only items that genuinely don't fit above
+Also produce a comprehensive grocery list covering every ingredient from every meal. Sum quantities intelligently and write items as you'd see them on a shopping list. Exclude true pantry staples (salt, pepper, cooking oil) unless a specific type or quantity matters. Categorise correctly: Produce = fresh veg and fruit only; Meat & Seafood = all proteins; Dairy & Eggs; Pantry & Dry Goods = spices, grains, sauces, condiments; Canned & Jarred; Bread & Bakery; Frozen; Other = genuine misfits only.
 
 For each meal, also write a clear step-by-step recipe. Steps should be concise — one or two sentences each. Assume a competent home cook.
 
