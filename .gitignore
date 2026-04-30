@@ -28,3 +28,7 @@ instance/
 # Logs
 logs/
 *.log
+
+# Tools
+.claude/
+.serena/

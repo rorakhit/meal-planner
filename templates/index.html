@@ -180,6 +180,10 @@
       padding: 8px 14px; background: var(--accent); color: var(--text);
       border: none; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer;
     }
+    .btn-swap-ingredient {
+      background: transparent; border: 1px solid var(--accent); color: var(--accent);
+    }
+    .btn-swap-ingredient:hover { background: var(--accent); color: var(--text); }
     .btn-cancel-regen {
       padding: 8px 12px; background: transparent;
       border: 1px solid var(--border); border-radius: 7px;
@@ -341,9 +345,10 @@
         <button class="btn-regen" onclick="toggleRegenForm({{ loop.index0 }})">↺ Swap this meal</button>
         <div class="regen-form" id="regen-form-{{ loop.index0 }}">
           <input type="text" id="regen-input-{{ loop.index0 }}"
-                 placeholder="What don't you like? e.g. salmon, avocado"
+                 placeholder="e.g. salmon  →  new meal  |  just an ingredient  →  swap it"
                  onkeydown="if(event.key==='Enter') submitRegen({{ loop.index0 }})">
-          <button class="btn-submit-regen" onclick="submitRegen({{ loop.index0 }})">Swap</button>
+          <button class="btn-submit-regen" onclick="submitRegen({{ loop.index0 }})">New meal</button>
+          <button class="btn-submit-regen btn-swap-ingredient" onclick="swapIngredient({{ loop.index0 }})">Swap ingredient</button>
           <button class="btn-cancel-regen" onclick="toggleRegenForm({{ loop.index0 }})">Cancel</button>
         </div>
       </div>
@@ -513,6 +518,33 @@
     } finally {
       btn.textContent = '↺ Swap this meal';
       btn.classList.remove('loading');
+    }
+  }
+
+  async function swapIngredient(idx) {
+    const input = document.getElementById('regen-input-' + idx);
+    const ingredient = input.value.trim();
+    if (!ingredient) { showToast('Enter an ingredient to swap'); return; }
+    const btn = document.querySelector('#card-' + idx + ' .btn-swap-ingredient');
+
+    btn.textContent = '↺ Swapping…';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/swap-ingredient', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ meal_index: idx, ingredient })
+      });
+      const data = await res.json();
+      if (data.error) { showToast('Error: ' + data.error); return; }
+      showToast('✓ Ingredient swapped!');
+      setTimeout(() => location.reload(), 1000);
+    } catch (e) {
+      showToast('Something went wrong — try again');
+    } finally {
+      btn.textContent = 'Swap ingredient';
+      btn.disabled = false;
     }
   }
 

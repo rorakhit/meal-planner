@@ -17,10 +17,10 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 def create_app():
     app = Flask(__name__, template_folder=Path(__file__).parent / "templates")
 
-    from meal_planner.routes import bp
+    from weeks_rations.routes import bp
     app.register_blueprint(bp)
 
-    from meal_planner.scheduler import scheduler
+    from weeks_rations.scheduler import scheduler
     scheduler.start()
 
     return app

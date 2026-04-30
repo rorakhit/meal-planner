@@ -2,7 +2,7 @@ import logging
 
 from flask import Blueprint, jsonify, render_template, request
 
-from .generator import generate_meal_plan, regenerate_meal
+from .generator import generate_meal_plan, regenerate_meal, swap_ingredient_in_meal
 from .models import load_plan
 from .scheduler import scheduler
 
@@ -55,6 +55,25 @@ def regenerate():
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         log.error(f"regenerate failed: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
+
+
+@bp.route("/swap-ingredient", methods=["POST"])
+def swap_ingredient():
+    body = request.get_json()
+    meal_index = body.get("meal_index")
+    ingredient = (body.get("ingredient") or "").strip()
+
+    if not ingredient:
+        return jsonify({"error": "No ingredient specified"}), 400
+
+    try:
+        updated_meal = swap_ingredient_in_meal(meal_index, ingredient)
+        return jsonify(updated_meal)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        log.error(f"swap-ingredient failed: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 

@@ -121,6 +121,35 @@ Return ONLY a JSON object with no markdown formatting:
 }}"""
 
 
+SWAP_INGREDIENT_PROMPT = """A meal is planned: {meal_json}
+
+The user wants to keep this exact meal but substitute "{ingredient}" with a compatible alternative.
+
+Rules:
+- Keep the dish name, cooking method, and all other ingredients exactly the same
+- Only replace "{ingredient}" — adjust quantities if needed to keep proportions right
+- The substitution must make culinary sense (similar texture, role, or flavour profile)
+- The substitute must be available at a standard Market Basket supermarket
+- NEVER include: arugula, tuna salad, pickled anything, raw/uncooked onions, feta cheese, or bone-in chicken
+- Update the description only if the substitution meaningfully changes the flavour profile
+- Update the recipe steps only where the substitution changes the technique
+- Serves 2 people — keep all quantities scaled for 2 servings
+
+Return ONLY a JSON object with no markdown formatting, in the same structure as the input:
+{{
+  "name": "Dish Name",
+  "description": "One sentence describing the dish.",
+  "time": "X minutes active cooking",
+  "ingredients": ["ingredient x qty", ...],
+  "recipe": {{
+    "prep_time": "X minutes",
+    "cook_time": "X minutes",
+    "steps": ["Step 1...", "Step 2..."],
+    "tip": "One optional tip — omit the key entirely if there is nothing worth adding."
+  }}
+}}"""
+
+
 def _pick_cuisine_theme(history: list) -> str:
     recent_themes = [w.get("cuisine_theme") for w in history[-2:] if w.get("cuisine_theme")]
     available = [t for t in CUISINE_THEMES if t not in recent_themes]
@@ -245,3 +274,35 @@ def regenerate_meal(meal_index: int, disliked: str):
     save_plan(plan)
 
     return new_meal
+
+
+def swap_ingredient_in_meal(meal_index: int, ingredient: str):
+    """Keep the same meal but substitute a single ingredient."""
+    plan = load_plan()
+    meals = plan.get("meals", [])
+
+    if meal_index is None or meal_index >= len(meals):
+        raise ValueError("Invalid meal index")
+
+    meal = meals[meal_index]
+    import json as _json
+    prompt = SWAP_INGREDIENT_PROMPT.format(
+        meal_json=_json.dumps(meal),
+        ingredient=ingredient,
+    )
+
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    message = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=1024,
+        messages=[{"role": "user", "content": prompt}],
+    )
+
+    updated_meal = parse_ai_json(message.content[0].text)
+
+    meals[meal_index] = updated_meal
+    plan["meals"] = meals
+    plan["all_ingredients"] = _fix_grocery_categories({"Grocery List": rebuild_all_ingredients(meals)})
+    save_plan(plan)
+
+    return updated_meal
