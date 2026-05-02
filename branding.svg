@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#1a2010"/>
-      <stop offset="100%" stop-color="#131808"/>
+      <stop offset="100%" stop-color="#111808"/>
     </linearGradient>
     <radialGradient id="iconGlow" cx="50%" cy="45%" r="55%">
-      <stop offset="0%" stop-color="#c4622d" stop-opacity="0.3"/>
-      <stop offset="60%" stop-color="#c4622d" stop-opacity="0.08"/>
+      <stop offset="0%" stop-color="#c4622d" stop-opacity="0.28"/>
+      <stop offset="60%" stop-color="#c4622d" stop-opacity="0.07"/>
       <stop offset="100%" stop-color="#c4622d" stop-opacity="0"/>
     </radialGradient>
     <radialGradient id="cardBg" cx="40%" cy="30%" r="70%">
@@ -33,230 +33,254 @@
       <feGaussianBlur stdDeviation="1.5" result="blur"/>
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
-    <!-- Clip for left UI panel -->
-    <clipPath id="leftClip">
-      <rect x="0" y="0" width="660" height="630"/>
-    </clipPath>
-    <!-- Right-edge fade on UI panel -->
-    <linearGradient id="rightEdgeFade" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#1a2010" stop-opacity="0"/>
-      <stop offset="75%" stop-color="#1a2010" stop-opacity="0"/>
+    <!-- Fade the right edge of the UI panel into the background -->
+    <linearGradient id="uiFade" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#1a2010" stop-opacity="0"/>
+      <stop offset="70%"  stop-color="#1a2010" stop-opacity="0"/>
       <stop offset="100%" stop-color="#1a2010" stop-opacity="1"/>
     </linearGradient>
     <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
       <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#fff" stroke-width="0.4" opacity="0.05"/>
     </pattern>
+    <clipPath id="uiClip">
+      <rect x="0" y="0" width="640" height="630"/>
+    </clipPath>
   </defs>
 
-  <!-- Background -->
-  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  <!-- ── Background ── -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
   <rect width="1200" height="630" fill="url(#grid)"/>
 
-  <!-- ═══════════════════════════════════════════
-       LEFT SIDE — App UI mock (crisp, no blur)
-  ═══════════════════════════════════════════ -->
-  <g clip-path="url(#leftClip)">
+  <!-- ═══════════════════════════════════════
+       LEFT: App UI — header + 2 meal cards
+  ═══════════════════════════════════════ -->
+  <g clip-path="url(#uiClip)">
 
-    <!-- Header bar -->
-    <rect x="24" y="24" width="612" height="80" rx="0" fill="#2e1a08"/>
-    <rect x="24" y="104" width="612" height="1" fill="#3a3820"/>
+    <!-- HEADER -->
+    <rect x="0" y="0" width="640" height="90" fill="#2e1a08"/>
+    <rect x="0" y="90" width="640" height="1" fill="#3a3820"/>
 
     <!-- Header: label -->
-    <text x="44" y="46" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-      font-size="10" font-weight="700" letter-spacing="1.5" fill="#b8a98a">THIS WEEK'S DINNERS</text>
+    <text x="28" y="22" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+      font-size="10" font-weight="700" letter-spacing="1.8" fill="#b8a98a">THIS WEEK'S DINNERS</text>
 
-    <!-- Header: bowl icon -->
-    <g transform="translate(44, 52)">
+    <!-- Header: bowl icon (28px) -->
+    <g transform="translate(28,30)">
       <rect width="28" height="28" rx="6" fill="#150e05"/>
-      <ellipse cx="14" cy="15" rx="10" ry="2.8" fill="#c4622d" opacity="0.2"/>
+      <ellipse cx="14" cy="15.5" rx="9.5" ry="2.6" fill="#c4622d" opacity="0.2"/>
       <path d="M4 14 Q3.5 21 14 22 Q24.5 21 24 14 Z" fill="#b06a28"/>
-      <ellipse cx="14" cy="14" rx="10" ry="2.5" fill="#d4954a"/>
-      <ellipse cx="14" cy="14" rx="8.5" ry="1.8" fill="#5a1e08"/>
+      <ellipse cx="14" cy="14" rx="10" ry="2.4" fill="#d4954a"/>
+      <ellipse cx="14" cy="14" rx="8.5" ry="1.7" fill="#5a1e08"/>
       <path d="M9 12.5 Q7.5 9 9 6" stroke="#e8c98a" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.75"/>
       <path d="M14 11.5 Q12.5 8 14 5" stroke="#e8c98a" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.85"/>
       <path d="M19 12.5 Q20.5 9 19 6" stroke="#e8c98a" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.75"/>
     </g>
 
     <!-- Header: app name -->
-    <text x="80" y="72" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-      font-size="20" font-weight="800" fill="#f2ead8" letter-spacing="-0.3">WeeksRations</text>
+    <text x="64" y="52" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+      font-size="22" font-weight="800" letter-spacing="-0.3" fill="#f2ead8">WeeksRations</text>
 
     <!-- Header: week -->
-    <text x="44" y="96" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    <text x="28" y="78" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
       font-size="12" fill="#b8a98a">Week of May 4, 2026</text>
 
-    <!-- Header: cuisine theme badge -->
-    <rect x="44" y="58" width="0" height="0"/>
-
-    <!-- Header: tagline -->
-    <text x="310" y="70" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-      font-size="15" font-weight="800" font-style="italic" fill="#d4954a" text-anchor="middle">Cook three times. Eat like you mean it.</text>
+    <!-- Header: tagline (centered) -->
+    <text x="370" y="48" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+      font-size="14" font-weight="800" font-style="italic" fill="#d4954a" text-anchor="middle"
+      >Cook three times. Eat like you mean it.</text>
 
     <!-- Header: generate button -->
-    <rect x="530" y="52" width="100" height="28" rx="6" fill="#c4622d"/>
-    <text x="580" y="70" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    <rect x="520" y="34" width="100" height="28" rx="6" fill="#c4622d"/>
+    <text x="570" y="52" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
       font-size="10" font-weight="700" fill="#f2ead8" text-anchor="middle">↺ New Plan</text>
 
     <!-- Cuisine theme tag -->
-    <rect x="44" y="112" width="240" height="20" rx="4" fill="#c4622d22"/>
-    <rect x="44" y="112" width="240" height="20" rx="4" fill="none" stroke="#d4954a66" stroke-width="1"/>
-    <text x="54" y="126" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-      font-size="9" font-weight="700" letter-spacing="0.8" fill="#d4954a">MEDITERRANEAN (GREEK, ITALIAN, SPANISH)</text>
+    <rect x="28" y="60" width="0" height="0"/><!-- spacer -->
 
-    <!-- Section label: DINNERS -->
-    <text x="24" y="154" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-      font-size="10" font-weight="700" letter-spacing="1.5" fill="#b8a98a">DINNERS</text>
-    <rect x="24" y="158" width="612" height="1" fill="#3a3820"/>
+    <!-- SECTION LABEL: DINNERS -->
+    <text x="28" y="114" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+      font-size="10" font-weight="700" letter-spacing="1.8" fill="#b8a98a">DINNERS</text>
+    <rect x="28" y="118" width="584" height="1" fill="#3a3820"/>
 
-    <!-- ── Meal Card 1 ── -->
-    <rect x="24" y="166" width="612" height="130" rx="12" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
-    <!-- Card header -->
-    <rect x="24" y="166" width="612" height="56" rx="0" fill="none"/>
-    <text x="44" y="188" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-      font-size="16" font-weight="800" fill="#f2ead8" letter-spacing="-0.3">Harissa-Glazed Chicken Thighs</text>
-    <text x="44" y="204" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-      font-size="11" font-style="italic" fill="#b8a98a">Marinate overnight for best results. Doubles well for lunch the next day.</text>
-    <!-- Time badge -->
-    <rect x="548" y="178" width="76" height="20" rx="5" fill="#c4622d22" stroke="#d4954a44" stroke-width="1"/>
-    <text x="586" y="192" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    <!-- ── MEAL CARD 1 ──
+         Outer card: y=126, height=180 → bottom at 306 -->
+    <rect x="28" y="126" width="584" height="178" rx="12" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
+
+    <!-- Card header row: 24px padding top, 48px tall -->
+    <text x="48" y="151" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+      font-size="17" font-weight="800" letter-spacing="-0.3" fill="#f2ead8"
+      >Harissa-Glazed Chicken Thighs</text>
+    <text x="48" y="169" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+      font-size="11" font-style="italic" fill="#b8a98a"
+      >Marinate overnight. Batch cooks well for lunch the next day.</text>
+    <!-- Time badge: right-aligned -->
+    <rect x="516" y="139" width="84" height="20" rx="5" fill="#c4622d22" stroke="#d4954a55" stroke-width="1"/>
+    <text x="558" y="153" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
       font-size="9" font-weight="700" letter-spacing="0.5" fill="#d4954a" text-anchor="middle">25 MIN ACTIVE</text>
-    <!-- Divider -->
-    <rect x="24" y="216" width="612" height="1" fill="#3a3820"/>
-    <!-- Ingredients column -->
-    <text x="44" y="232" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+
+    <!-- Divider below header -->
+    <rect x="28" y="180" width="584" height="1" fill="#3a3820"/>
+
+    <!-- Ingredients col (28..220) -->
+    <text x="48" y="197" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
       font-size="9" font-weight="700" letter-spacing="1.2" fill="#c4622d">INGREDIENTS</text>
-    <text x="44" y="249" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· boneless chicken thighs x 4</text>
-    <text x="44" y="264" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· harissa paste x 3 tbsp</text>
-    <text x="44" y="279" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· lemon x 1, garlic x 4 cloves</text>
-    <!-- Vertical divider -->
-    <rect x="230" y="220" width="1" height="72" fill="#3a3820"/>
-    <!-- Recipe steps -->
-    <text x="248" y="232" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    <text x="48" y="215" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· boneless chicken thighs — 4</text>
+    <text x="48" y="232" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· harissa paste — 3 tbsp</text>
+    <text x="48" y="249" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· lemon — 1, garlic — 4 cloves</text>
+    <text x="48" y="266" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· olive oil, cumin, smoked paprika</text>
+
+    <!-- Vertical divider between cols -->
+    <rect x="240" y="182" width="1" height="118" fill="#3a3820"/>
+
+    <!-- Recipe col (240..) -->
+    <text x="260" y="197" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
       font-size="9" font-weight="700" letter-spacing="1.2" fill="#c4622d">HOW TO MAKE IT</text>
     <!-- Step 1 -->
-    <rect x="248" y="241" width="18" height="18" rx="9" fill="#c4622d"/>
-    <text x="257" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9" font-weight="800" fill="#1a2010" text-anchor="middle">1</text>
-    <text x="274" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#f2ead8">Whisk harissa, lemon juice, garlic, and olive oil.</text>
+    <rect x="260" y="204" width="18" height="18" rx="9" fill="#c4622d"/>
+    <text x="269" y="217" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9" font-weight="800" fill="#1a2010" text-anchor="middle">1</text>
+    <text x="285" y="217" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#f2ead8">Whisk harissa, lemon juice, garlic, and oil. Coat chicken.</text>
     <!-- Step 2 -->
-    <rect x="248" y="263" width="18" height="18" rx="9" fill="#c4622d"/>
-    <text x="257" y="276" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9" font-weight="800" fill="#1a2010" text-anchor="middle">2</text>
-    <text x="274" y="276" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#f2ead8">Marinate chicken 30 min or overnight.</text>
+    <rect x="260" y="226" width="18" height="18" rx="9" fill="#c4622d"/>
+    <text x="269" y="239" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9" font-weight="800" fill="#1a2010" text-anchor="middle">2</text>
+    <text x="285" y="239" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#f2ead8">Marinate 30 min or overnight in the fridge.</text>
+    <!-- Step 3 -->
+    <rect x="260" y="248" width="18" height="18" rx="9" fill="#c4622d"/>
+    <text x="269" y="261" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9" font-weight="800" fill="#1a2010" text-anchor="middle">3</text>
+    <text x="285" y="261" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#f2ead8">Sear 4 min per side until cooked through and charred.</text>
 
-    <!-- ── Meal Card 2 ── -->
-    <rect x="24" y="304" width="612" height="115" rx="12" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
-    <text x="44" y="326" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-      font-size="16" font-weight="800" fill="#f2ead8" letter-spacing="-0.3">Seared Salmon with Miso Butter</text>
-    <text x="44" y="342" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    <!-- Tip bar -->
+    <rect x="28" y="282" width="584" height="1" fill="#3a3820"/>
+    <rect x="36" y="288" width="568" height="10" rx="0" fill="none"/>
+    <text x="48" y="300" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#d4954a">💡  Rest 5 min before slicing — it stays juicier.</text>
+
+
+    <!-- ── MEAL CARD 2 ──
+         y=316, height=160 → bottom at 476 -->
+    <rect x="28" y="318" width="584" height="152" rx="12" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
+
+    <text x="48" y="343" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+      font-size="17" font-weight="800" letter-spacing="-0.3" fill="#f2ead8">Seared Salmon with Miso Butter</text>
+    <text x="48" y="361" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
       font-size="11" font-style="italic" fill="#b8a98a">Quick weeknight dinner — miso butter goes on right off the heat.</text>
-    <rect x="548" y="316" width="76" height="20" rx="5" fill="#c4622d22" stroke="#d4954a44" stroke-width="1"/>
-    <text x="586" y="330" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    <rect x="516" y="330" width="84" height="20" rx="5" fill="#c4622d22" stroke="#d4954a55" stroke-width="1"/>
+    <text x="558" y="344" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
       font-size="9" font-weight="700" letter-spacing="0.5" fill="#d4954a" text-anchor="middle">20 MIN ACTIVE</text>
-    <rect x="24" y="354" width="612" height="1" fill="#3a3820"/>
-    <text x="44" y="370" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· salmon fillets x 2 (6 oz each)</text>
-    <text x="44" y="385" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· white miso x 2 tbsp, butter x 2 tbsp</text>
-    <text x="44" y="400" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· bok choy x 2 heads, sesame oil</text>
-    <rect x="230" y="358" width="1" height="55" fill="#3a3820"/>
-    <rect x="248" y="366" width="18" height="18" rx="9" fill="#c4622d"/>
-    <text x="257" y="379" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9" font-weight="800" fill="#1a2010" text-anchor="middle">1</text>
-    <text x="274" y="379" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#f2ead8">Pat salmon dry, season generously with salt.</text>
-    <rect x="248" y="388" width="18" height="18" rx="9" fill="#c4622d"/>
-    <text x="257" y="401" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9" font-weight="800" fill="#1a2010" text-anchor="middle">2</text>
-    <text x="274" y="401" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#f2ead8">Sear skin-side down 4 min until crispy.</text>
 
-    <!-- ── Meal Card 3 ── -->
-    <rect x="24" y="427" width="612" height="100" rx="12" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
-    <text x="44" y="449" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-      font-size="16" font-weight="800" fill="#f2ead8" letter-spacing="-0.3">Spiced Lamb Flatbread</text>
-    <text x="44" y="465" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-      font-size="11" font-style="italic" fill="#b8a98a">Za'atar lamb on toasted flatbread — fast, bold, impressive.</text>
-    <rect x="548" y="439" width="76" height="20" rx="5" fill="#c4622d22" stroke="#d4954a44" stroke-width="1"/>
-    <text x="586" y="453" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-      font-size="9" font-weight="700" letter-spacing="0.5" fill="#d4954a" text-anchor="middle">30 MIN ACTIVE</text>
-    <rect x="24" y="477" width="612" height="1" fill="#3a3820"/>
-    <text x="44" y="493" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· ground lamb x 1 lb, za'atar x 2 tbsp</text>
-    <text x="44" y="508" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· flatbreads x 4, cherry tomatoes x 1 cup</text>
-    <rect x="230" y="481" width="1" height="40" fill="#3a3820"/>
-    <rect x="248" y="485" width="18" height="18" rx="9" fill="#c4622d"/>
-    <text x="257" y="498" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9" font-weight="800" fill="#1a2010" text-anchor="middle">1</text>
-    <text x="274" y="498" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#f2ead8">Brown lamb with za'atar over high heat.</text>
+    <rect x="28" y="372" width="584" height="1" fill="#3a3820"/>
 
-    <!-- ── Snack section ── -->
-    <text x="24" y="548" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-      font-size="10" font-weight="700" letter-spacing="1.5" fill="#b8a98a">SNACK IDEAS</text>
-    <rect x="24" y="552" width="612" height="1" fill="#3a3820"/>
-    <!-- Snack pills -->
-    <rect x="24" y="560" width="118" height="26" rx="13" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
-    <text x="83" y="577" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a" text-anchor="middle">Marcona almonds</text>
-    <rect x="150" y="560" width="104" height="26" rx="13" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
-    <text x="202" y="577" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a" text-anchor="middle">Apple + PB</text>
-    <rect x="262" y="560" width="96" height="26" rx="13" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
-    <text x="310" y="577" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a" text-anchor="middle">Kettle chips</text>
-    <rect x="366" y="560" width="110" height="26" rx="13" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
-    <text x="421" y="577" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a" text-anchor="middle">String cheese</text>
-    <rect x="484" y="560" width="108" height="26" rx="13" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
-    <text x="538" y="577" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a" text-anchor="middle">Beef jerky</text>
+    <text x="48" y="389" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+      font-size="9" font-weight="700" letter-spacing="1.2" fill="#c4622d">INGREDIENTS</text>
+    <text x="48" y="407" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· salmon fillets — 2 (6 oz each)</text>
+    <text x="48" y="424" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· white miso — 2 tbsp, butter — 2 tbsp</text>
+    <text x="48" y="441" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· bok choy — 2 heads, sesame oil</text>
 
-    <!-- ── Grocery section ── -->
-    <text x="24" y="608" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-      font-size="10" font-weight="700" letter-spacing="1.5" fill="#b8a98a">GROCERY LIST</text>
-    <rect x="24" y="612" width="612" height="1" fill="#3a3820"/>
+    <rect x="240" y="374" width="1" height="92" fill="#3a3820"/>
+
+    <text x="260" y="389" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+      font-size="9" font-weight="700" letter-spacing="1.2" fill="#c4622d">HOW TO MAKE IT</text>
+    <rect x="260" y="396" width="18" height="18" rx="9" fill="#c4622d"/>
+    <text x="269" y="409" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9" font-weight="800" fill="#1a2010" text-anchor="middle">1</text>
+    <text x="285" y="409" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#f2ead8">Pat salmon dry. Season with salt and pepper.</text>
+    <rect x="260" y="418" width="18" height="18" rx="9" fill="#c4622d"/>
+    <text x="269" y="431" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9" font-weight="800" fill="#1a2010" text-anchor="middle">2</text>
+    <text x="285" y="431" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#f2ead8">Sear skin-side down 4 min until golden and crispy.</text>
+    <rect x="260" y="440" width="18" height="18" rx="9" fill="#c4622d"/>
+    <text x="269" y="453" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9" font-weight="800" fill="#1a2010" text-anchor="middle">3</text>
+    <text x="285" y="453" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#f2ead8">Flip, add miso butter, baste 2 min off heat.</text>
+
+    <!-- ── SNACK PILLS ── y=488 -->
+    <text x="28" y="492" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+      font-size="10" font-weight="700" letter-spacing="1.8" fill="#b8a98a">SNACK IDEAS</text>
+    <rect x="28" y="496" width="584" height="1" fill="#3a3820"/>
+
+    <rect x="28"  y="504" width="120" height="26" rx="13" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
+    <text x="88"  y="521" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a" text-anchor="middle">Marcona almonds</text>
+
+    <rect x="156" y="504" width="96" height="26" rx="13" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
+    <text x="204" y="521" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a" text-anchor="middle">Apple + PB</text>
+
+    <rect x="260" y="504" width="90" height="26" rx="13" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
+    <text x="305" y="521" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a" text-anchor="middle">Kettle chips</text>
+
+    <rect x="358" y="504" width="100" height="26" rx="13" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
+    <text x="408" y="521" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a" text-anchor="middle">String cheese</text>
+
+    <rect x="466" y="504" width="90" height="26" rx="13" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
+    <text x="511" y="521" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a" text-anchor="middle">Beef jerky</text>
+
+    <!-- ── GROCERY SECTION ── y=548 -->
+    <text x="28" y="552" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+      font-size="10" font-weight="700" letter-spacing="1.8" fill="#b8a98a">GROCERY LIST</text>
+    <rect x="28" y="556" width="584" height="1" fill="#3a3820"/>
+
+    <!-- Two panels side by side -->
+    <rect x="28"  y="564" width="284" height="56" rx="10" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
+    <text x="48"  y="580" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" font-weight="700" fill="#f2ead8">Already have</text>
+    <rect x="28"  y="584" width="284" height="1" fill="#3a3820"/>
+    <text x="48"  y="600" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· olive oil · garlic · cumin · paprika</text>
+    <text x="48"  y="614" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· sesame oil · salt · pepper</text>
+
+    <rect x="320" y="564" width="292" height="56" rx="10" fill="#242d16" stroke="#3a3820" stroke-width="1"/>
+    <text x="340" y="580" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" font-weight="700" fill="#f2ead8">Need to buy</text>
+    <rect x="320" y="584" width="292" height="1" fill="#3a3820"/>
+    <text x="340" y="600" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" font-weight="700" letter-spacing="0.8" fill="#c4622d">MEAT &amp; SEAFOOD</text>
+    <text x="340" y="614" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#b8a98a">· chicken thighs — 4 · salmon fillets — 2</text>
 
   </g>
 
-  <!-- Right-edge fade so UI blends into icon section -->
-  <rect x="0" y="0" width="660" height="630" fill="url(#rightEdgeFade)"/>
+  <!-- Right-edge fade: UI → background -->
+  <rect x="0" y="0" width="640" height="630" fill="url(#uiFade)"/>
 
-  <!-- ═══════════════════════════════════════════
-       RIGHT SIDE — Icon + branding
-  ═══════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════
+       RIGHT: Icon + branding
+  ═══════════════════════════════════════ -->
 
-  <!-- Icon glow halo -->
-  <ellipse cx="920" cy="280" rx="220" ry="200" fill="url(#iconGlow)"/>
+  <!-- Glow halo -->
+  <ellipse cx="920" cy="275" rx="215" ry="195" fill="url(#iconGlow)"/>
 
   <!-- Icon card -->
   <g filter="url(#cardShadow)">
-    <rect x="770" y="90" width="300" height="300" rx="56" fill="url(#cardBg)"/>
+    <rect x="770" y="85" width="300" height="300" rx="56" fill="url(#cardBg)"/>
   </g>
-  <rect x="770" y="90" width="300" height="300" rx="56" fill="url(#grid)" opacity="0.7"/>
-  <rect x="770" y="90" width="300" height="300" rx="56" fill="none" stroke="#c4622d" stroke-width="1.5" opacity="0.22"/>
+  <rect x="770" y="85" width="300" height="300" rx="56" fill="url(#grid)" opacity="0.7"/>
+  <rect x="770" y="85" width="300" height="300" rx="56" fill="none" stroke="#c4622d" stroke-width="1.5" opacity="0.22"/>
 
-  <!-- Bowl icon centered at 920,240 -->
   <!-- Bowl shadow -->
-  <ellipse cx="920" cy="322" rx="88" ry="10" fill="#000" opacity="0.4"/>
+  <ellipse cx="920" cy="320" rx="88" ry="10" fill="#000" opacity="0.4"/>
   <!-- Bowl body -->
-  <path d="M 812 242 Q 810 316 920 324 Q 1030 316 1028 242 Z" fill="url(#bowlGrad)"/>
+  <path d="M 812 240 Q 810 314 920 322 Q 1030 314 1028 240 Z" fill="url(#bowlGrad)"/>
   <!-- Rim -->
-  <ellipse cx="920" cy="242" rx="108" ry="26" fill="url(#rimGrad)"/>
-  <!-- Soup surface -->
-  <ellipse cx="920" cy="242" rx="96" ry="20" fill="url(#soupGrad)"/>
+  <ellipse cx="920" cy="240" rx="108" ry="26" fill="url(#rimGrad)"/>
+  <!-- Soup -->
+  <ellipse cx="920" cy="240" rx="96" ry="20" fill="url(#soupGrad)"/>
   <!-- Soup highlight -->
-  <ellipse cx="898" cy="236" rx="30" ry="7" fill="#d4954a" opacity="0.12"/>
+  <ellipse cx="898" cy="234" rx="30" ry="7" fill="#d4954a" opacity="0.12"/>
   <!-- Herb garnish -->
-  <ellipse cx="906" cy="241" rx="9" ry="4" fill="#3d6b32" transform="rotate(-15 906 241)"/>
-  <ellipse cx="922" cy="238" rx="7" ry="3.5" fill="#4e8a3f" transform="rotate(8 922 238)"/>
-  <ellipse cx="936" cy="243" rx="6" ry="3" fill="#3d6b32" transform="rotate(-5 936 243)"/>
+  <ellipse cx="906" cy="239" rx="9" ry="4" fill="#3d6b32" transform="rotate(-15 906 239)"/>
+  <ellipse cx="922" cy="236" rx="7" ry="3.5" fill="#4e8a3f" transform="rotate(8 922 236)"/>
+  <ellipse cx="936" cy="241" rx="6" ry="3" fill="#3d6b32" transform="rotate(-5 936 241)"/>
   <!-- Steam wisps -->
   <g filter="url(#steamGlow)" stroke="#e8c98a" stroke-linecap="round" fill="none">
-    <path d="M 884 228 Q 876 205 884 183 Q 892 161 884 139" stroke-width="2.8" opacity="0.6"/>
-    <path d="M 920 224 Q 912 199 920 175 Q 928 151 920 127" stroke-width="3.2" opacity="0.7"/>
-    <path d="M 956 228 Q 964 205 956 183 Q 948 161 956 139" stroke-width="2.8" opacity="0.6"/>
+    <path d="M 884 226 Q 876 203 884 181 Q 892 159 884 137" stroke-width="2.8" opacity="0.6"/>
+    <path d="M 920 222 Q 912 197 920 173 Q 928 149 920 125" stroke-width="3.2" opacity="0.7"/>
+    <path d="M 956 226 Q 964 203 956 181 Q 948 159 956 137" stroke-width="2.8" opacity="0.6"/>
   </g>
   <!-- Spoon -->
-  <rect x="978" y="188" width="10" height="88" rx="5" fill="#d4954a" transform="rotate(38 983 232)"/>
-  <ellipse cx="953" cy="228" rx="16" ry="11" fill="#d4954a" transform="rotate(38 953 228)"/>
-  <ellipse cx="952" cy="226" rx="10" ry="6" fill="#b06a28" opacity="0.55" transform="rotate(38 952 226)"/>
+  <rect x="978" y="186" width="10" height="88" rx="5" fill="#d4954a" transform="rotate(38 983 230)"/>
+  <ellipse cx="953" cy="226" rx="16" ry="11" fill="#d4954a" transform="rotate(38 953 226)"/>
+  <ellipse cx="952" cy="224" rx="10" ry="6" fill="#b06a28" opacity="0.55" transform="rotate(38 952 224)"/>
 
   <!-- App name -->
-  <text x="920" y="436" text-anchor="middle"
+  <text x="920" y="432" text-anchor="middle"
     font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
     font-size="36" font-weight="800" letter-spacing="-0.5" fill="#f2ead8">WeeksRations</text>
 
   <!-- Tagline -->
-  <text x="920" y="464" text-anchor="middle"
+  <text x="920" y="460" text-anchor="middle"
     font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
     font-size="13" font-weight="600" letter-spacing="3.5" fill="#7a6548">YOUR WEEK. SORTED.</text>
 
-  <!-- Live dot -->
-  <circle cx="920" cy="492" r="4" fill="#d4954a" opacity="0.6"/>
+  <!-- Dot accent -->
+  <circle cx="920" cy="488" r="4" fill="#d4954a" opacity="0.6"/>
 
 </svg>
