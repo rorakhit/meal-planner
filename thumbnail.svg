@@ -1,129 +1,124 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480" width="400" height="480">
   <defs>
-    <radialGradient id="bgGrad" cx="50%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#2e2a14"/>
-      <stop offset="100%" stop-color="#1a2010"/>
+    <!-- Background gradient for the rounded square -->
+    <radialGradient id="bgGrad" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#2a1f0e"/>
+      <stop offset="100%" stop-color="#100d06"/>
     </radialGradient>
-    <radialGradient id="bowlGrad" cx="40%" cy="30%" r="65%">
+
+    <!-- Warm glow behind the bowl -->
+    <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#c4622d" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#c4622d" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Bowl body gradient -->
+    <linearGradient id="bowlGrad" x1="30%" y1="0%" x2="70%" y2="100%">
       <stop offset="0%" stop-color="#d4954a"/>
-      <stop offset="100%" stop-color="#8b4513"/>
+      <stop offset="60%" stop-color="#b06a28"/>
+      <stop offset="100%" stop-color="#7a3f10"/>
+    </linearGradient>
+
+    <!-- Bowl rim gradient -->
+    <linearGradient id="rimGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#e0a55a"/>
+      <stop offset="100%" stop-color="#a85f20"/>
+    </linearGradient>
+
+    <!-- Soup surface gradient -->
+    <radialGradient id="soupGrad" cx="45%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#9b3d1a"/>
+      <stop offset="100%" stop-color="#5a1e08"/>
     </radialGradient>
-    <radialGradient id="soupGrad" cx="40%" cy="35%" r="60%">
-      <stop offset="0%" stop-color="#c4622d"/>
-      <stop offset="60%" stop-color="#8b3a1a"/>
-      <stop offset="100%" stop-color="#6b2a10"/>
-    </radialGradient>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="3" result="blur"/>
+
+    <!-- Inner glow filter on bowl -->
+    <filter id="bowlGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
-    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.4"/>
+
+    <!-- Subtle drop shadow -->
+    <filter id="shadow" x="-15%" y="-10%" width="130%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.5"/>
     </filter>
+
+    <!-- Steam glow -->
+    <filter id="steamGlow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Outer card shadow -->
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#000" flood-opacity="0.6"/>
+    </filter>
+
+    <!-- Subtle grid pattern -->
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M 28 0 L 0 0 0 28" fill="none" stroke="#ffffff" stroke-width="0.3" opacity="0.07"/>
+    </pattern>
   </defs>
 
-  <!-- Background -->
-  <rect width="400" height="400" rx="32" fill="url(#bgGrad)"/>
+  <!-- Outer card -->
+  <rect x="10" y="10" width="380" height="380" rx="52" fill="url(#bgGrad)" filter="url(#cardShadow)"/>
 
-  <!-- Subtle grid texture lines -->
-  <g opacity="0.06" stroke="#d4954a" stroke-width="0.5">
-    <line x1="0" y1="80" x2="400" y2="80"/>
-    <line x1="0" y1="160" x2="400" y2="160"/>
-    <line x1="0" y1="240" x2="400" y2="240"/>
-    <line x1="0" y1="320" x2="400" y2="320"/>
-    <line x1="80" y1="0" x2="80" y2="400"/>
-    <line x1="160" y1="0" x2="160" y2="400"/>
-    <line x1="240" y1="0" x2="240" y2="400"/>
-    <line x1="320" y1="0" x2="320" y2="400"/>
-  </g>
+  <!-- Grid texture -->
+  <rect x="10" y="10" width="380" height="380" rx="52" fill="url(#grid)"/>
 
-  <!-- Outer warm ring glow behind bowl -->
-  <ellipse cx="200" cy="215" rx="115" ry="105" fill="#c4622d" opacity="0.12"/>
+  <!-- Warm glow blob behind bowl -->
+  <ellipse cx="200" cy="210" rx="140" ry="120" fill="url(#glowGrad)"/>
 
-  <!-- Bowl shadow -->
-  <ellipse cx="200" cy="300" rx="100" ry="18" fill="#000" opacity="0.35"/>
+  <!-- Bowl shadow on floor -->
+  <ellipse cx="200" cy="308" rx="88" ry="12" fill="#000" opacity="0.4"/>
 
   <!-- Bowl body -->
-  <path d="M 90 210 Q 90 310 200 315 Q 310 310 310 210 Z" fill="url(#bowlGrad)" filter="url(#softShadow)"/>
+  <g filter="url(#shadow)">
+    <path d="M 100 210 Q 98 300 200 308 Q 302 300 300 210 Z" fill="url(#bowlGrad)"/>
+  </g>
 
-  <!-- Bowl rim (ellipse top) -->
-  <ellipse cx="200" cy="210" rx="110" ry="28" fill="#c87f38"/>
-  <ellipse cx="200" cy="210" rx="110" ry="28" fill="none" stroke="#d4954a" stroke-width="2.5" opacity="0.7"/>
+  <!-- Rim ellipse -->
+  <ellipse cx="200" cy="210" rx="100" ry="26" fill="url(#rimGrad)"/>
 
-  <!-- Soup surface inside rim -->
-  <ellipse cx="200" cy="210" rx="100" ry="22" fill="#8b3a1a"/>
-  <ellipse cx="200" cy="210" rx="100" ry="22" fill="url(#soupGrad)" opacity="0.9"/>
+  <!-- Soup surface -->
+  <ellipse cx="200" cy="210" rx="90" ry="20" fill="url(#soupGrad)"/>
 
-  <!-- Soup surface shine -->
-  <ellipse cx="180" cy="205" rx="35" ry="8" fill="#d4954a" opacity="0.18"/>
+  <!-- Soup highlight -->
+  <ellipse cx="178" cy="204" rx="28" ry="7" fill="#d4954a" opacity="0.12"/>
+
+  <!-- Herb garnish dots on soup -->
+  <ellipse cx="190" cy="209" rx="7" ry="3.5" fill="#3d6b32" transform="rotate(-15 190 209)"/>
+  <ellipse cx="203" cy="207" rx="6" ry="3" fill="#4e8a3f" transform="rotate(8 203 207)"/>
+  <ellipse cx="213" cy="211" rx="5" ry="2.5" fill="#3d6b32" transform="rotate(-5 213 211)"/>
 
   <!-- Steam wisps -->
-  <g stroke="#f2ead8" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.55">
-    <!-- Left steam -->
-    <path d="M 158 195 Q 152 180 158 165 Q 164 150 158 135">
-      <animate attributeName="d" dur="2.4s" repeatCount="indefinite"
-        values="M 158 195 Q 152 180 158 165 Q 164 150 158 135;
-                M 158 195 Q 165 180 158 165 Q 151 150 158 135;
-                M 158 195 Q 152 180 158 165 Q 164 150 158 135"
-        calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
-      <animate attributeName="opacity" dur="2.4s" repeatCount="indefinite"
-        values="0.55;0.25;0.55"/>
-    </path>
-    <!-- Center steam -->
-    <path d="M 200 192 Q 194 174 200 158 Q 206 142 200 126">
-      <animate attributeName="d" dur="2.8s" repeatCount="indefinite"
-        values="M 200 192 Q 194 174 200 158 Q 206 142 200 126;
-                M 200 192 Q 207 174 200 158 Q 193 142 200 126;
-                M 200 192 Q 194 174 200 158 Q 206 142 200 126"
-        calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
-      <animate attributeName="opacity" dur="2.8s" repeatCount="indefinite"
-        values="0.55;0.2;0.55"/>
-    </path>
-    <!-- Right steam -->
-    <path d="M 242 195 Q 248 180 242 165 Q 236 150 242 135">
-      <animate attributeName="d" dur="2.2s" repeatCount="indefinite"
-        values="M 242 195 Q 248 180 242 165 Q 236 150 242 135;
-                M 242 195 Q 235 180 242 165 Q 249 150 242 135;
-                M 242 195 Q 248 180 242 165 Q 236 150 242 135"
-        calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
-      <animate attributeName="opacity" dur="2.2s" repeatCount="indefinite"
-        values="0.55;0.3;0.55"/>
-    </path>
+  <g filter="url(#steamGlow)" stroke="#e8c98a" stroke-linecap="round" fill="none">
+    <path d="M 163 196 Q 157 178 163 162 Q 169 146 163 130" stroke-width="2.2" opacity="0.5"/>
+    <path d="M 200 193 Q 194 173 200 155 Q 206 137 200 119" stroke-width="2.5" opacity="0.6"/>
+    <path d="M 237 196 Q 243 178 237 162 Q 231 146 237 130" stroke-width="2.2" opacity="0.5"/>
   </g>
 
-  <!-- Spoon -->
-  <g filter="url(#softShadow)" opacity="0.95">
-    <!-- Spoon handle -->
-    <rect x="290" y="155" width="9" height="95" rx="4.5" fill="#d4954a" transform="rotate(35 294.5 202)"/>
-    <!-- Spoon head ellipse -->
-    <ellipse cx="269" cy="192" rx="16" ry="11" fill="#d4954a" transform="rotate(35 269 192)"/>
-    <ellipse cx="268" cy="190" rx="10" ry="6" fill="#c4622d" opacity="0.5" transform="rotate(35 268 190)"/>
+  <!-- Spoon resting across bowl -->
+  <g filter="url(#shadow)">
+    <!-- Handle -->
+    <rect x="258" y="168" width="8" height="80" rx="4" fill="#d4954a" transform="rotate(38 262 208)"/>
+    <!-- Spoon bowl -->
+    <ellipse cx="236" cy="195" rx="13" ry="9" fill="#d4954a" transform="rotate(38 236 195)"/>
+    <!-- Spoon bowl inner -->
+    <ellipse cx="235" cy="193" rx="8" ry="5" fill="#b06a28" opacity="0.6" transform="rotate(38 235 193)"/>
   </g>
 
-  <!-- Herb garnish (small green leaves on soup) -->
-  <g opacity="0.85">
-    <ellipse cx="185" cy="208" rx="8" ry="4" fill="#4a7c3f" transform="rotate(-20 185 208)"/>
-    <ellipse cx="196" cy="205" rx="7" ry="3.5" fill="#5a9a4a" transform="rotate(10 196 205)"/>
-    <ellipse cx="207" cy="209" rx="6" ry="3" fill="#4a7c3f" transform="rotate(-5 207 209)"/>
-  </g>
+  <!-- Subtle inner border on card -->
+  <rect x="10" y="10" width="380" height="380" rx="52" fill="none" stroke="#c4622d" stroke-width="1" opacity="0.2"/>
 
-  <!-- App name text -->
-  <text x="200" y="358" text-anchor="middle"
+  <!-- App name -->
+  <text x="200" y="432" text-anchor="middle"
     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-    font-size="28" font-weight="800" letter-spacing="-0.5"
+    font-size="32" font-weight="800" letter-spacing="-0.5"
     fill="#f2ead8">WeeksRations</text>
 
   <!-- Tagline -->
-  <text x="200" y="382" text-anchor="middle"
+  <text x="200" y="460" text-anchor="middle"
     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-    font-size="11" font-weight="700" letter-spacing="2"
-    fill="#b8a98a" text-transform="uppercase">YOUR WEEK. SORTED.</text>
-
-  <!-- Top label bar -->
-  <rect x="140" y="28" width="120" height="22" rx="5" fill="#c4622d" opacity="0.18"/>
-  <rect x="140" y="28" width="120" height="22" rx="5" fill="none" stroke="#c4622d" stroke-width="1" opacity="0.5"/>
-  <text x="200" y="43" text-anchor="middle"
-    font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-    font-size="10" font-weight="700" letter-spacing="1.5"
-    fill="#d4954a">MEAL PLANNER</text>
+    font-size="12" font-weight="600" letter-spacing="3"
+    fill="#7a6548">YOUR WEEK. SORTED.</text>
 </svg>
